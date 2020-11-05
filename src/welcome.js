@@ -9,6 +9,8 @@ export default function Welcome() {
                 component
             </h1>
             <Registration />
+            <a href="/login">if you have a profile, get a life</a>
+            <img src="" />
         </div>
     );
 }

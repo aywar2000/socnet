@@ -1,4 +1,5 @@
 import React from "react"; //for every single component, import react
+// eslint-disable-next-line no-unused-vars
 import axios from "axios";
 import GreetYe from "./greetYe";
 //CLASS SYNTAX - C in component must be capital C
@@ -33,14 +34,14 @@ export default class HelloWorld extends React.Component {
     }
     render() {
         return (
-            <>
+            <div>
                 <p onClick={() => this.handleClick()}>hellou</p>
-                //<p>{this.state.first}</p>
+                <p>{this.state.first}</p>
                 <GreetYe first={this.state.first} />
                 <p>how</p>
                 <p>you</p>
-                <p>doin'?!</p>
-            </>
+                <p>doin?!</p>
+            </div>
         );
     }
 }

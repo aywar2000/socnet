@@ -1,3 +1,5 @@
+// eslint-disable-next-line no-undef
+var spicedPg = require("spiced-pg");
 const db = spicedPg(
     process.env.DATABASE_URL ||
         "postgres:postgres:postgres@localhost:5432/socnet"
@@ -15,9 +17,10 @@ module.exports.getPass = (email) => {
 //     return db.query(q, params);
 // };
 
-module.exports.insertUsers = (first, last, email, pw) => {
-  const q = `INSERT INTO users(first, last, email, password)
+module.exports.insertUsers = (first, last, email, password) => {
+    const q = `INSERT INTO users(first, last, email, password)
               VALUES ($1, $2, $3, $4)
               RETURNING *`;
-  const params = [first, last, email, pw];
-  return db.query(q, params);
+    const params = [first, last, email, password];
+    return db.query(q, params);
+};
