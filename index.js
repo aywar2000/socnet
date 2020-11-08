@@ -2,11 +2,13 @@ const express = require("express");
 const app = express();
 const compression = require("compression");
 const cookieSession = require("cookie-session");
-// eslint-disable-next-line no-unused-vars
 const db = require("./db");
-const csurf = require("csurf");
 // eslint-disable-next-line no-unused-vars
+const csurf = require("csurf");
 const { hash, compare } = require("./bc");
+const ses = require("./ses");
+const cryptoRandomString = require("crypto-random-string");
+// const s3 = require("./s3"); - za slike upload, kasnije
 
 ////// MULTER (iz IMAGEBOARD)//////////
 const multer = require("multer");
@@ -24,6 +26,7 @@ const diskStorage = multer.diskStorage({
     },
 });
 
+// eslint-disable-next-line no-unused-vars
 const uploader = multer({
     storage: diskStorage,
     limits: {
@@ -39,14 +42,44 @@ app.use(
     })
 );
 ///////// CSRF
-app.use(function (req, res, next) {
-    res.cookie("mytoken", req.csrfToken());
-    next();
-});
+// app.use(function (req, res, next) {
+//     res.cookie("mytoken", req.csrfToken());
+//     next();
+// });
 
 app.use(compression());
 app.use(express.json());
 app.use(express.static("public"));
+if (process.env.NODE_ENV != "production") {
+    app.use(
+        "/bundle.js",
+        require("http-proxy-middleware")({
+            target: "http://localhost:8081/",
+        })
+    );
+} else {
+    app.use("/bundle.js", (req, res) => res.sendFile(`${__dirname}/bundle.js`));
+}
+
+app.get("/welcome", (req, res) => {
+    console.log("welcome reached");
+    console.log("req.session", req.session);
+    let { userId } = req.session;
+    console.log("userid for cookie", userId);
+
+    app.get("/welcome", (req, res) => {
+        if (req.session.userId) {
+            res.redirect("/");
+        } else {
+            res.sendFile(__dirname + "/index.html");
+        }
+    });
+    if (userId) {
+        res.redirect("/");
+    } else {
+        res.sendFile(__dirname + "/index.html");
+    }
+});
 
 app.post("/registration", (req, res) => {
     const first = req.body.first;
@@ -74,134 +107,156 @@ app.post("/registration", (req, res) => {
         });
 });
 
+app.post("/login", (req, res) => {
+    db.getPass(req.body.email)
+        .then((result) => {
+            const hashedPassword = result.rows[0].password;
+            const password = req.body.password;
+            const id = result.rows[0].id;
+            console.log("hashedPw", hashedPassword);
+            compare(password, hashedPassword)
+                .then((matchValue) => {
+                    if (matchValue == true) {
+                        req.session.userId = id;
+                        console.log("id", id);
+                        res.json({
+                            success: true,
+                        });
+                    } else {
+                        res.json({ success: false });
+                    }
+                })
+                .catch((error) => {
+                    console.log("error in POST login compare", error);
+                    res.json({
+                        success: false,
+                    });
+                });
+        })
+        .catch((error) => {
+            console.log("error in post login: ", error);
+            res.json({
+                success: false,
+            });
+        });
+});
+
 // when everything works (i.e. hashing and inserting a row, and adding somethin to the session object)
 //req.session.userId = 1;
 //res.json({ success: true });
-
-if (process.env.NODE_ENV != "production") {
-    app.use(
-        "/bundle.js",
-        require("http-proxy-middleware")({
-            target: "http://localhost:8081/",
+app.post("/password/reset/start", (req, res) => {
+    db.checkEmail(req.body.email)
+        .then((result) => {
+            if (result.rows[0].exists == true) {
+                const secretCode = cryptoRandomString({
+                    length: 6,
+                });
+                let email = req.body.email;
+                db.insertCode(secretCode, email)
+                    .then(() => {
+                        ses.sendEmail(
+                            email,
+                            "socnet email verification",
+                            secretCode
+                        )
+                            .then(() => {
+                                res.json({
+                                    success: true,
+                                });
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                                res.json({
+                                    success: false,
+                                });
+                            });
+                    })
+                    .catch((error) => {
+                        console.log("error in insertCode: ", error);
+                        res.json({
+                            success: false,
+                        });
+                    });
+            } else {
+                res.json({
+                    success: false,
+                });
+            }
         })
-    );
-} else {
-    app.use("/bundle.js", (req, res) => res.sendFile(`${__dirname}/bundle.js`));
-}
-
-app.get("/welcome", (req, res) => {
-    console.log("welcome reached");
-    console.log("req.session", req.session);
-    let { userId } = req.session;
-    console.log("userid for cookie", userId);
-
-    if (userId) {
-        res.redirect("/");
-    } else {
-        res.sendFile(__dirname + "/index.html");
-    }
+        .catch((error) => {
+            console.log("error in db.check email: ", error);
+            res.json({
+                state: false,
+            });
+        });
 });
 
-//PETITION
-// app.post("/register", (req, res) => {
-//   const first = req.body.first;
-//   const last = req.body.last;
-//   const email = req.body.email;
-//   const password = req.body.password;
-//   console.log("req.body: ", req.body);
-//   // console.log("passw", password);
-//   hash(password)
-//     .then((hashedPassword) => {
-//       db.insertUsers(first, last, email, hashedPassword)
-//         .then((result) => {
-//           console.log("result.rows", result.rows);
-//           req.session.userId = result.rows[0].id;
-//           res.redirect("/profile");
-//         })
-//         .catch((err) => {
-//           console.log("error in insert user", err);
-//           res.render("register", {
-//             err,
-//           });
-//         });
-//     })
-//     .catch((err) => {
-//       console.log("err in hash", err);
-//       res.render("register", { err });
-//     });
-// });
+app.post("/password/reset/verify", (req, res) => {
+    db.findCode(req.body.email)
+        .then((result) => {
+            let index = result.rows.length - 1;
+            if (result.rows[index].code == req.body.code) {
+                hash(req.body.password)
+                    .then((hashedPassword) => {
+                        db.updateUser(req.body.email, hashedPassword)
+                            .then(() => {
+                                res.json({ success: true });
+                            })
+                            .catch((err) => {
+                                console.log("error in password catch: ", err);
+                                res.json({
+                                    success: false,
+                                });
+                            });
+                    })
+                    .catch((err) => {
+                        console.log("error in hash", err);
+                        res.json({ success: false });
+                    });
+            } else {
+                res.json({
+                    success: false,
+                });
+            }
+        })
+        .catch((error) => {
+            console.log("error in find code: ", error);
+            res.json({
+                success: false,
+            });
+        });
+});
 
-// app.post("/register", (req, res) => {
-//     console.log("post to register route was made");
-//     //onst first = req.body.first;
-//     //   const last = req.body.last;
-//     //   const email = req.body.email;
-//     //   const password = req.body.password;
-//     //   console.log("req.body: ", req.body);
-//     const { first, last, email, password } = req.body;
-//     if (first !== "" && last !== "" && email !== "" && password !== "") {
-//         console.log("req.body", req.body);
-//         db.getPass(email) //traži korisnika
-//         .then((results) => {
-//         if (results.rows.length === 0) {
-//         hash(password)
-//         .then((hashedPw) => {
-//             db.insertUsers(first, last, email, hashedPw)
-//              .then(({ rows }) => {
-//                  console.log("result-rows", rows);
-//                  req.session.userId = rows[0].id;
-//                  console.log("rows.id", rows[0].id);
-//                  res.json({ success: true });
-//                 // console.log("req.session.userId", req.session.userId);
-//                 });
-//ADD CATCH ERROR
+app.get("/user", (req, res) => {
+    const id = req.session.userId;
+    db.getUserInfo(id)
+        .then((result) => {
+            res.json(result.rows);
+        })
+        .catch((error) => {
+            console.log("error in getUserInfo: ", error);
+        });
+});
 
-// app.post("/login", (req, res) => {
-//     db.getPass(req.body.email)
-//         .then((result) => {
-//             const hashedPw = result.rows[0].password;
-//             const password = req.body.password; //promijenio iz pw u password
-//             const id = result.rows[0].id;
-//             compare(password, hashedPw)
-//                 .then((matchValue) => {
-//                     if (matchValue == true) {
-//                         req.session.userId = id;
-//                         console.log("id", id);
-//                         db.getSignature(req.session.userId)
-//                             .then((signatures) => {
-//                                 if (signatures.rows[0]) {
-//                                     //pazi na pisanje tu; promijenio u signatures, result-rows 1, jer mi je id 0
-//                                     req.session.sigid = result.rows[0].id; //tu nešto zeza; uspio c.logati id
-//                                     res.redirect("/thankyou");
-//                                 } else {
-//                                     res.redirect("/petition");
-//                                 }
-//                             })
-//                             .catch((error) => {
-//                                 console.log("ERARRE", error);
-//                                 res.render("login", { error });
-//                             });
-//                     } else {
-//                         //console.log("error sloj vanka", error);
-//                         res.render("login", { error: true });
-//                     }
-//                 })
-//                 .catch((error) => {
-//                     res.render("login", {
-//                         error,
-//                     });
-//                 });
-//         })
-//         .catch((error) => {
-//             res.render("login", { error });
-//         });
-// });
-
-app.get("/welcome", (req, res) => {
-    if (req.session.userId) {
-        res.redirect("/");
+app.get("/user/:id.json", (req, res) => {
+    if (req.params.id == req.session.userId) {
+        res.json({
+            redirect: true,
+        });
     } else {
-        res.sendFile(__dirname + "/index.html");
+        db.getUserInfo(req.params.id)
+            .then((result) => {
+                if (result.rows[0]) {
+                    res.json(result.rows);
+                } else {
+                    res.json({
+                        redirect: true,
+                    });
+                }
+            })
+            .catch((error) => {
+                console.log("db error userinfo id", error);
+            });
     }
 });
 

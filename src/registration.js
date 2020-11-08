@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default class Registration extends React.Component {
     constructor() {
@@ -14,7 +15,7 @@ export default class Registration extends React.Component {
             {
                 [e.target.name]: e.target.value,
             },
-            console.log("this.state in the callback: ", this.state)
+            console.log("this.state: ", this.state)
         );
     }
 
@@ -45,22 +46,22 @@ export default class Registration extends React.Component {
     render() {
         console.log("this.state.error: ", this.state.error);
         return (
-            <div>
-                <h2>I am the Registration Component!</h2>
-                {this.state.error && <div>Oops, something went wrong!</div>}
+            <form>
+                <h2>join the network of like-minded</h2>
+                {this.state.error && <div>something went wrong</div>}
                 <input
                     name="first"
-                    placeholder="first name..."
+                    placeholder="first name"
                     onChange={(e) => this.handleChange(e)}
                 ></input>
                 <input
                     name="last"
-                    placeholder="last name..."
+                    placeholder="last name"
                     onChange={(e) => this.handleChange(e)}
                 ></input>
                 <input
                     name="email"
-                    placeholder="email..."
+                    placeholder="email"
                     onChange={(e) => this.handleChange(e)}
                 ></input>
                 <input
@@ -70,7 +71,12 @@ export default class Registration extends React.Component {
                     onChange={(e) => this.handleChange(e)}
                 ></input>
                 <button onClick={() => this.submit()}>Register!</button>
-            </div>
+                <h1>or</h1>
+                <div>
+                    already a member?
+                    <Link to="/login">log in here</Link>
+                </div>
+            </form>
         );
     }
 }

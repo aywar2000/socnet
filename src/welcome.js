@@ -1,16 +1,21 @@
 import React from "react";
 import Registration from "./registration";
+import Login from "./login";
+import ResetPassword from "./resetPassword";
+import { HashRouter, Route } from "react-router-dom";
 
 export default function Welcome() {
     return (
-        <div>
-            <h1>
-                I am the welcome component, below is Registration child
-                component
-            </h1>
-            <Registration />
-            <a href="/login">if you have a profile, get a life</a>
-            <img src="" />
-        </div>
+        <HashRouter>
+            <div>
+                <img src="/" alt="logo" />
+                <div>come join us</div>
+                <div>
+                    <Route exact path="/" component={Registration} />
+                    <Route path="/login" component={Login} />
+                    <Route path="/reset" component={ResetPassword} />
+                </div>
+            </div>
+        </HashRouter>
     );
 }
