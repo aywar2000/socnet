@@ -4,3 +4,8 @@
     font-family: monospace;
     color: white;
 }
+
+logo-small {
+    height: 200px;
+    width: 200px;
+}
