@@ -8,7 +8,7 @@ export default function Welcome() {
     return (
         <HashRouter>
             <div>
-                <img src="/" alt="logo" />
+                <img src="/ok.png" className="logo-small" alt="logo" />
                 <div>come join us</div>
                 <div>
                     <Route exact path="/" component={Registration} />

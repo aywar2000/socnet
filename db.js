@@ -58,3 +58,10 @@ module.exports.getUserInfo = (id) => {
     return db.query(q, params);
 };
 
+module.exports.addProfPic = (imgUrl, id) => {
+    const q = `UPDATE users
+    SET img_url=$1
+    WHERE id=$2`;
+    const params = [imgUrl, id];
+    return db.query(q, params);
+};

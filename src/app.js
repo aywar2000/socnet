@@ -1,27 +1,30 @@
 import React from "react";
 import axios from "./axios";
+// eslint-disable-next-line no-unused-vars
 import Uploader from "./uploader";
 import Logo from "./logo";
-import Uploader from "./uploader";
+// eslint-disable-next-line no-unused-vars
 import { BrowserRouter, Route, Link } from "react-router-dom";
+import ProfilePic from "./profilePic";
 
 export default class App extends React.Component {
     constructor() {
         super();
         this.state = {
-            first: this.state.first,
-            last: this.state.last,
-            imgUrl: null,
+            //         first: this.state.first,
+            //         last: this.state.last,
+            //         imgUrl: null,
             uploaderIsVisible: false,
         };
-        this.methodInApp = this.methodInApp.bind(this);
+        //     this.methodInApp = this.methodInApp.bind(this);
     }
 
     componentDidMount() {
         console.log("App just mounted");
         axios
-            .get("/")
+            .get("/user")
             .then(({ data }) => {
+                console.log(data);
                 this.setState({
                     id: data[0].id,
                     first: data[0].first,
@@ -30,9 +33,10 @@ export default class App extends React.Component {
                     imgUrl: data[0].img_url,
                     timestamp: data[0].created_at,
                 });
+                console.log("this.state", this.state);
             })
             .catch((error) => {
-                console.log("error in cdm in app: ", error);
+                console.log("app error component did mount: ", error);
             });
     }
 
@@ -41,12 +45,12 @@ export default class App extends React.Component {
             uploaderIsVisible: !this.state.uploaderIsVisible,
         });
     }
-    
-    methodInApp(arg) {
-        console.log("running in App component");
-        console.log("the argument I got passed was:", arg);
-        console.log("this is the current state of app:", this.state);
-    }
+
+    // methodInApp(arg) {
+    //     console.log("running in App component");
+    //     console.log("the argument I got passed was:", arg);
+    //     console.log("this is the current state of app:", this.state);
+    // }
 
     setImgUrl(url) {
         this.setState({
@@ -55,57 +59,54 @@ export default class App extends React.Component {
         });
     }
 
-    setBio(newBio) {
-        this.setState({
-            bio: newBio,
-        });
-    }
+    // setBio(newBio) {
+    //     this.setState({
+    //         bio: newBio,
+    //     });
+    // }
 
+    logout() {
+        axios
+            .get("/logout")
+            .then(() => {
+                location.replace("/welcome#/login");
+            })
+            .catch((err) => {
+                console.log("error in logout: ", err);
+            });
+    }
 
     render() {
         return (
             <BrowserRouter>
                 <div>
                     <div>
-                        <Route exact path="/" component={Logo} />
-                        
-                           <header>
-                           <h1>Hey I am your App :D</h1>
-                           </header>
-                <div className="main-container">
-                    <Xmpl
-                        first={this.state.first}
-                        last={this.state.last}
-                        imgUrl={this.state.imgUrl}
-                    />
-                    <h2 onClick={() => this.toggleUploader()}>
-                        {" "}
-                        Changing state with a method: toggleUploader
-                        {this.state.uploaderIsVisible && " 🐵"}
-                        {!this.state.uploaderIsVisible && " 🙈"}{" "}
-                    </h2>
-                    {this.state.uploaderIsVisible && (
-                        <Uploader methodInApp={this.methodInApp} />
-                    )}
-                </div>
-                    </div>
+                        <Logo />
 
-                    <Route
-                        exact
-                        path="/"
-                        render={() => (
-                            <Profile
-                                first={this.state.first}
-                                last={this.state.last}
-                                bio={this.state.bio}
-                                imgUrl={this.state.imgUrl}
-                                toggleModal={() => this.toggleModal()}
-                                setBio={(newBio) => this.setBio(newBio)}
+                        <header>
+                            <h1>hej DORA!!!</h1>
+                        </header>
+                    </div>
+                    <div>
+                        <ProfilePic
+                            first={this.state.first}
+                            last={this.state.last}
+                            imgUrl={this.state.imgUrl}
+                            toggleUploader={() => this.toggleUploader()}
+                        />
+                    </div>
+                    <div>
+                        {this.state.uploaderIsVisible && (
+                            <Uploader
+                                toggleUploader={() => this.toggleUploader()}
+                                setImgUrl={(url) => this.setImgUrl(url)}
                             />
                         )}
-                    />
-                    )}
+                    </div>
                 </div>
+                <Link to="/logout" onClick={() => this.logout()}>
+                    Log Out
+                </Link>
             </BrowserRouter>
         );
     }

@@ -22,6 +22,7 @@ export default class Uploader extends React.Component {
         axios
             .post("/upload", formData)
             .then(({ data }) => {
+                console.log(data.imgUrl);
                 let imgUrl = data.imgUrl;
                 this.props.setImgUrl(imgUrl);
             })
@@ -35,27 +36,21 @@ export default class Uploader extends React.Component {
     render() {
         return (
             <div>
-                <div>
-                    <h1
-                        onClick={() => this.props.toggleModal()}
-                        className="close-uploader"
-                    >
-                        X
-                    </h1>
-                    {this.state.error && (
-                        <p>
-                            something went wrong
-                        </p>
-                    )}
+                <h1
+                    onClick={() => this.props.toggleUploader()}
+                    className="close-uploader"
+                >
+                    X
+                </h1>
+                {this.state.error && <p>something went wrong</p>}
 
-                    <input
-                        onChange={(e) => this.handleChange(e)}
-                        type="file"
-                        name="file"
-                        accept="image/*"
-                    />
-
-                </div>
+                <input
+                    onChange={(e) => this.handleChange(e)}
+                    type="file"
+                    name="file"
+                    accept="image/*"
+                />
+                <button onClick={(e) => this.uploadImage(e)}>foto tu</button>
             </div>
         );
     }

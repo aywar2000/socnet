@@ -8,7 +8,8 @@ const csurf = require("csurf");
 const { hash, compare } = require("./bc");
 const ses = require("./ses");
 const cryptoRandomString = require("crypto-random-string");
-// const s3 = require("./s3"); - za slike upload, kasnije
+const s3 = require("./s3");
+const s3url = "https://s3.amazonaws.com/spicedling/";
 
 ////// MULTER (iz IMAGEBOARD)//////////
 const multer = require("multer");
@@ -228,6 +229,7 @@ app.post("/password/reset/verify", (req, res) => {
 });
 
 app.get("/user", (req, res) => {
+    console.log("tu sam");
     const id = req.session.userId;
     db.getUserInfo(id)
         .then((result) => {
@@ -258,6 +260,29 @@ app.get("/user/:id.json", (req, res) => {
                 console.log("db error userinfo id", error);
             });
     }
+});
+app.get("/logout", (req, res) => {
+    req.session = null;
+    res.json({ logout: true });
+});
+
+app.post("/upload", uploader.single("file"), s3.upload, (req, res) => {
+    let userId = req.session.userId;
+    let imageUrl = s3url + req.file.filename;
+
+    db.addProfPic(imageUrl, userId)
+        .then(() => {
+            res.json({
+                success: true,
+                imgUrl: imageUrl,
+            });
+        })
+        .catch((error) => {
+            console.log("error in insert prof pic: ", error);
+            res.json({
+                error: true,
+            });
+        });
 });
 
 // it is important that the * route is the LAST get route we have....
