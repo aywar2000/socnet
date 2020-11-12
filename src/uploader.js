@@ -37,7 +37,7 @@ export default class Uploader extends React.Component {
         return (
             <div>
                 <h1
-                    onClick={() => this.props.toggleUploader()}
+                    onClick={() => this.props.toggleUploader()} //slično i za bio uploader
                     className="close-uploader"
                 >
                     X

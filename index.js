@@ -270,7 +270,7 @@ app.post("/upload", uploader.single("file"), s3.upload, (req, res) => {
     let userId = req.session.userId;
     let imageUrl = s3url + req.file.filename;
 
-    db.addProfPic(imageUrl, userId)
+    db.addProfilePic(imageUrl, userId)
         .then(() => {
             res.json({
                 success: true,
@@ -282,6 +282,21 @@ app.post("/upload", uploader.single("file"), s3.upload, (req, res) => {
             res.json({
                 error: true,
             });
+        });
+});
+
+app.post("/bio", (req, res) => {
+    let userId = req.session.userId;
+    let newBio = req.body.newBio;
+    db.addBio(newBio, userId)
+        .then(() => {
+            res.json({
+                success: true,
+                newBio,
+            });
+        })
+        .catch((error) => {
+            console.log("error in post bio: ", error);
         });
 });
 

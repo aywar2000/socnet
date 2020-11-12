@@ -5,9 +5,9 @@ export default function ProfilePic({ first, last, imgUrl, toggleUploader }) {
 
     return (
         <div>
-            <h2>
-                Hey I am the profile pic component My name is {first} {last}
-            </h2>
+            {/* <h2>
+                My name is {this.state.first} {this.state.last}
+            </h2> */}
             <img
                 className="profile-pic"
                 src={imgUrl}

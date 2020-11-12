@@ -75,10 +75,10 @@ export default class ResetPassword extends React.Component {
 
         if (step == "email") {
             reset = (
-                <div>
-                    <p>reset password</p>
+                <div className="reset-input">
+                    <h1>reset password</h1>
                     {this.state.error && <div>something went wrong</div>}
-                    <p>to reset password, enter your e-mail</p>
+                    <h4>enter your user e-mail to receive verification code</h4>
                     <input
                         name="email"
                         placeholder="e-mail"

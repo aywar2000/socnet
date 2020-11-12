@@ -5,7 +5,8 @@ import Uploader from "./uploader";
 import Logo from "./logo";
 // eslint-disable-next-line no-unused-vars
 import { BrowserRouter, Route, Link } from "react-router-dom";
-import ProfilePic from "./profilePic";
+//import ProfilePic from "./profilePic";
+import Profile from "./profile";
 
 export default class App extends React.Component {
     constructor() {
@@ -59,11 +60,11 @@ export default class App extends React.Component {
         });
     }
 
-    // setBio(newBio) {
-    //     this.setState({
-    //         bio: newBio,
-    //     });
-    // }
+    setBio(newBio) {
+        this.setState({
+            bio: newBio,
+        });
+    }
 
     logout() {
         axios
@@ -79,34 +80,60 @@ export default class App extends React.Component {
     render() {
         return (
             <BrowserRouter>
-                <div>
-                    <div>
+                <div className="profile-container">
+                    <div className="header-menu">
                         <Logo />
 
                         <header>
-                            <h1>hej DORA!!!</h1>
+                            <h1>your profile</h1>
                         </header>
                     </div>
-                    <div>
+                    <Link to="/logout" onClick={() => this.logout()}>
+                        <button id="logout-button">log out</button>
+                    </Link>
+
+                    {/* <div>
                         <ProfilePic
                             first={this.state.first}
                             last={this.state.last}
                             imgUrl={this.state.imgUrl}
                             toggleUploader={() => this.toggleUploader()}
                         />
-                    </div>
+                    </div> */}
                     <div>
                         {this.state.uploaderIsVisible && (
                             <Uploader
                                 toggleUploader={() => this.toggleUploader()}
-                                setImgUrl={(url) => this.setImgUrl(url)}
+                                setImgUrl={(url) => this.setImgUrl(url)} //za bio edit
                             />
                         )}
                     </div>
                 </div>
-                <Link to="/logout" onClick={() => this.logout()}>
-                    Log Out
-                </Link>
+                <div>
+                    <Profile
+                        first={this.state.first}
+                        last={this.state.last}
+                        bio={this.state.bio}
+                        imgUrl={this.state.imgUrl}
+                        toggleUploader={() => this.toggleUploader()}
+                        setBio={(newBio) => this.setBio(newBio)}
+                    />
+                </div>
+
+                {/* <Route
+                    exact
+                    path="/"
+                    render={() => (
+                        <Profile
+                            first={this.state.first}
+                            last={this.state.last}
+                            bio={this.state.bio}
+                            imgUrl={this.state.imgUrl}
+                            toggleUploader={() => this.toggleUploader()}
+                            setBio={(newBio) => this.setBio(newBio)}
+                        />
+                    )}
+                /> */}
             </BrowserRouter>
         );
     }

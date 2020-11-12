@@ -46,8 +46,8 @@ export default class Registration extends React.Component {
     render() {
         console.log("this.state.error: ", this.state.error);
         return (
-            <form>
-                <h2>join the network of like-minded</h2>
+            <form className="input-form">
+                <h1>a network of like-minded</h1>
                 {this.state.error && <div>something went wrong</div>}
                 <input
                     name="first"
@@ -70,8 +70,8 @@ export default class Registration extends React.Component {
                     type="password"
                     onChange={(e) => this.handleChange(e)}
                 ></input>
-                <button onClick={() => this.submit()}>Register!</button>
-                <h1>or</h1>
+                <button onClick={() => this.submit()}>register now</button>
+                <h2>or</h2>
                 <div>
                     already a member?
                     <Link to="/login">log in here</Link>
