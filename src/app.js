@@ -7,6 +7,9 @@ import Logo from "./logo";
 import { BrowserRouter, Route, Link } from "react-router-dom";
 //import ProfilePic from "./profilePic";
 import Profile from "./profile";
+import OtherProfile from "./otherprofile.js";
+import FindPeople from "./findpeople";
+import FriendBtn from "./friendbtn";
 
 export default class App extends React.Component {
     constructor() {
@@ -110,6 +113,8 @@ export default class App extends React.Component {
                     </div>
                 </div>
                 <div>
+                    <Link to="/users">find like-minded people</Link>
+                    <Link to="/friends">friends</Link>
                     <Profile
                         first={this.state.first}
                         last={this.state.last}
@@ -119,7 +124,18 @@ export default class App extends React.Component {
                         setBio={(newBio) => this.setBio(newBio)}
                     />
                 </div>
-
+                <Route
+                    path="/user/:id"
+                    render={(props) => (
+                        <OtherProfile
+                            key={props.match.url}
+                            match={props.match}
+                            history={props.history}
+                        />
+                    )}
+                />
+                <Route path="/users" component={FindPeople} />
+                <Route path="/friends" component={FriendBtn} />
                 {/* <Route
                     exact
                     path="/"

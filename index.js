@@ -257,8 +257,28 @@ app.get("/user/:id.json", (req, res) => {
                 }
             })
             .catch((error) => {
-                console.log("db error userinfo id", error);
+                console.log("error in db - userid", error);
             });
+    }
+});
+
+app.get("/findusers", (req, res) => {
+    if (req.query.val == "") {
+        db.getLastUsers(req.session.userId)
+            .then((result) => {
+                res.json(result.rows);
+            })
+            .catch((error) => {
+                console.log("error in get users: ", error);
+            });
+    } else {
+        db.getMatchingUsers(req.query.val, req.session.userId)
+            .then((result) => {
+                res.json(result.rows);
+            })
+            .catch((error) =>
+                console.log("error in get matching users: ", error)
+            );
     }
 });
 app.get("/logout", (req, res) => {
@@ -297,6 +317,55 @@ app.post("/bio", (req, res) => {
         })
         .catch((error) => {
             console.log("error in post bio: ", error);
+        });
+});
+app.get("/checkfriendshipstatus/:id", (req, res) => {
+    let userId = req.session.userId;
+    let otherId = req.params.id;
+
+    db.getInitialStatus(userId, otherId)
+        .then((result) => {
+            res.json(result.rows);
+        })
+        .catch((error) =>
+            console.log("error in select initial status: ", error)
+        );
+});
+
+app.post("/makefriendshiprequest/:id", (req, res) => {
+    let userId = req.session.userId;
+    let otherId = req.params.id;
+
+    db.makeFriendRequest(userId, otherId)
+        .then((result) => {
+            res.json(result.rows);
+        })
+        .catch((error) => {
+            console.log("error in make friend request: ", error);
+        });
+});
+
+app.post("/endfriendship/:id", (req, res) => {
+    let userId = req.session.userId;
+    let otherId = req.params.id;
+    db.deleteFriendship(userId, otherId)
+        .then(() => {
+            res.json(otherId);
+        })
+        .catch((error) => {
+            console.log("error in cancel end friendship: ", error);
+        });
+});
+
+app.post("/addfriendship/:id", (req, res) => {
+    let userId = req.session.userId;
+    let otherId = req.params.id;
+    db.addFriendship(userId, otherId)
+        .then(() => {
+            res.json(otherId);
+        })
+        .catch((error) => {
+            console.log("error in add friendship: ", error);
         });
 });
 

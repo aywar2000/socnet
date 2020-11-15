@@ -13,7 +13,7 @@ export default function Profile({
     return (
         <React.Fragment>
             <div className="profile">
-                <div className="big-pic">
+                <div className="user-foto">
                     <ProfilePic
                         toggleUploader={toggleUploader}
                         imgUrl={imgUrl}
@@ -22,11 +22,10 @@ export default function Profile({
                         }}
                     />
                 </div>
-                <p>
-                    <strong className="black-font">
-                        {first} {last}
-                    </strong>
-                </p>
+
+                <h1 className="user-name">
+                    {first} {last}
+                </h1>
             </div>
             <BioEditor bio={bio} setBio={setBio} />
         </React.Fragment>
