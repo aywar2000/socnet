@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 const compression = require("compression");
+//socket
+//const server = require('http').Server(app);
+//const io = require('socket.io')(server, { origins: 'localhost:8080' });
 const cookieSession = require("cookie-session");
 const db = require("./db");
 // eslint-disable-next-line no-unused-vars
@@ -387,5 +390,12 @@ app.get("*", function (req, res) {
 });
 
 app.listen(8080, function () {
+    //app zamijeniti za server. (za socket) - ne treba mijenjati routes
     console.log("I'm listening.");
 });
+
+//all of the backend socket code comes below - var io (odozgo)
+
+// io.on('connection', function(socket) {
+//     console.log(`socket with the id ${socket.id} is now connected`);
+// });

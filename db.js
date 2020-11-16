@@ -74,23 +74,6 @@ module.exports.addBio = (newBio, id) => {
     return db.query(q, params);
 };
 
-module.exports.getLastUsers = (id) => {
-    const q = `SELECT * FROM users
-     WHERE id != $1
-     ORDER BY created_at DESC 
-     LIMIT 3;`;
-    const params = [id];
-    return db.query(q, params);
-};
-
-module.exports.getMatchingUsers = (val, id) => {
-    const q = `SELECT * FROM users 
-    WHERE first ILIKE $1
-    AND id != $2`;
-    const params = [val + "%", id];
-    return db.query(q, params);
-};
-
 module.exports.getInitialStatus = (userId, otherId) => {
     const q = `SELECT * FROM friendships 
     WHERE (receiver_id = $1 AND sender_id = $2)
