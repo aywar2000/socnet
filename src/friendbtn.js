@@ -27,7 +27,7 @@ export default function FriendBtn(props) {
                 }
             })
             .catch((error) =>
-                console.log("error when comp mounts initial: ", error)
+                console.log("error in component mount: ", error)
             );
     }, []);
 
@@ -44,11 +44,11 @@ export default function FriendBtn(props) {
                     }
                 })
                 .catch((error) => {
-                    console.log("error in make friend request: ", error);
+                    console.log("error in send request: ", error);
                 });
         } else if (
             buttonText == "cancel request" ||
-            buttonText == "friendship's end"
+            buttonText == "end friend"
         ) {
             axios
                 .post(`/endfriendship/${props.id}`, {
@@ -58,7 +58,7 @@ export default function FriendBtn(props) {
                     setButtonText("send request");
                 })
                 .catch((error) => {
-                    console.log("error in cancel end friendship: ", error);
+                    console.log("error in end friend: ", error);
                 });
         } else if (buttonText == "accept request") {
             axios
@@ -66,10 +66,10 @@ export default function FriendBtn(props) {
                     params: { id: props.id },
                 })
                 .then(() => {
-                    setButtonText("friendship's end");
+                    setButtonText("end a friend");
                 })
                 .catch((error) => {
-                    console.log("error in add friendship: ", error);
+                    console.log("error in add: ", error);
                 });
         }
     };
@@ -79,7 +79,7 @@ export default function FriendBtn(props) {
             <button onClick={handleClick} className="friend-btn">
                 {buttonText}
             </button>
-            {buttonText == "friendship's end"}
+            {buttonText == "end a friend"}
         </React.Fragment>
     );
 }

@@ -10,6 +10,7 @@ import Profile from "./profile";
 import OtherProfile from "./otherprofile.js";
 import FindPeople from "./findpeople";
 import FriendBtn from "./friendbtn";
+import Friends from "./friends.js";
 
 export default class App extends React.Component {
     constructor() {
@@ -114,6 +115,7 @@ export default class App extends React.Component {
                 </div>
                 <div>
                     <Link to="/users">find like-minded people</Link>
+                    <h4>______</h4>
                     <Link to="/friends">friends</Link>
                     <Profile
                         first={this.state.first}
@@ -135,6 +137,7 @@ export default class App extends React.Component {
                     )}
                 />
                 <Route path="/users" component={FindPeople} />
+                <Route path="/friends" component={Friends} />
                 <Route path="/friends" component={FriendBtn} />
                 {/* <Route
                     exact

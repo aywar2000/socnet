@@ -50,7 +50,9 @@ export default class Uploader extends React.Component {
                     name="file"
                     accept="image/*"
                 />
-                <button onClick={(e) => this.uploadImage(e)}>foto tu</button>
+                <button onClick={(e) => this.uploadImage(e)}>
+                    upload photo
+                </button>
             </div>
         );
     }
