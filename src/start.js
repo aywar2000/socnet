@@ -10,6 +10,7 @@ import { Provider } from "react-redux";
 import reduxPromise from "redux-promise";
 import { composeWithDevTools } from "redux-devtools-extension";
 import reducer from "./reducer";
+import { init } from "./socket.js";
 
 const store = createStore(
     reducer,
@@ -17,22 +18,27 @@ const store = createStore(
 );
 
 let elem;
-const userIsLoggedIn = location.pathname != "/welcome";
+// const userIsLoggedIn = location.pathname != "/welcome";
 
-if (userIsLoggedIn) {
-    elem = (
-        <Provider store={store}>
-            <App />;
-        </Provider>
-    );
-} else {
-    elem = <Welcome />;
-}
+// if (userIsLoggedIn) {
+//     elem = (
+//         <Provider store={store}>
+//             <App />;
+//         </Provider>
+//     );
+// } else {
+//     elem = <Welcome />;
+// }
 //Staro
 // let elem;
-// if (location.pathname === "/welcome") {
-//     elem = <Welcome />;
-// } else {
-//     elem = <App />; //novo iz dev, promijeniti u elem = (<Provider store={store}><App /></Provider>)
-// }
+if (location.pathname === "/welcome") {
+    elem = <Welcome />;
+} else {
+    init(store);
+    elem = (
+        <Provider store={store}>
+            <App />
+        </Provider>
+    ); //novo iz dev, promijeniti u elem = (<Provider store={store}><App /></Provider>)
+}
 ReactDOM.render(elem, document.querySelector("main"));

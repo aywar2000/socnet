@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const compression = require("compression");
 //socket
-//const server = require('http').Server(app);
-//const io = require('socket.io')(server, { origins: 'localhost:8080' });
+const server = require("http").Server(app);
+const io = require("socket.io")(server, { origins: "localhost:8080" });
 const cookieSession = require("cookie-session");
 const db = require("./db");
 // eslint-disable-next-line no-unused-vars
@@ -39,20 +39,31 @@ const uploader = multer({
 });
 
 /////////COOKIES
+
+app.use(compression());
+
+const cookieSessionMiddleware = cookieSession({
+    secret: "i'm tired",
+    maxAge: 1000 * 60 * 60 * 24 * 14,
+});
+
+app.use(cookieSessionMiddleware);
+io.use(function (socket, next) {
+    cookieSessionMiddleware(socket.request, socket.request.res, next);
+});
 app.use(
-    cookieSession({
-        secret: "i'm tired",
-        maxAge: 1000 * 60 * 60 * 24 * 14,
+    express.urlencoded({
+        extended: false,
     })
 );
 ///////// CSRF
-// app.use(function (req, res, next) {
-//     res.cookie("mytoken", req.csrfToken());
-//     next();
-// });
-
-app.use(compression());
 app.use(express.json());
+app.use(csurf());
+app.use(function (req, res, next) {
+    res.cookie("mytoken", req.csrfToken());
+    next();
+});
+
 app.use(express.static("public"));
 if (process.env.NODE_ENV != "production") {
     app.use(
@@ -66,23 +77,28 @@ if (process.env.NODE_ENV != "production") {
 }
 
 app.get("/welcome", (req, res) => {
-    console.log("welcome reached");
-    console.log("req.session", req.session);
-    let { userId } = req.session;
-    console.log("userid for cookie", userId);
-
-    app.get("/welcome", (req, res) => {
-        if (req.session.userId) {
-            res.redirect("/");
-        } else {
-            res.sendFile(__dirname + "/index.html");
-        }
-    });
-    if (userId) {
-        res.redirect("/");
-    } else {
+    if (!req.session.userId) {
         res.sendFile(__dirname + "/index.html");
+    } else {
+        res.redirect("/");
     }
+    // console.log("welcome reached");
+    // console.log("req.session", req.session);
+    // let { userId } = req.session;
+    // console.log("userid for cookie", userId);
+
+    // app.get("/welcome", (req, res) => {
+    //     if (req.session.userId) {
+    //         res.redirect("/");
+    //     } else {
+    //         res.sendFile(__dirname + "/index.html");
+    //     }
+    // });
+    // if (userId) {
+    //     res.redirect("/");
+    // } else {
+    //     res.sendFile(__dirname + "/index.html");
+    // }
 });
 
 app.post("/registration", (req, res) => {
@@ -372,6 +388,32 @@ app.post("/addfriendship/:id", (req, res) => {
         });
 });
 
+app.get("/friends-wannabes", (req, res) => {
+    let id = req.session.userId;
+    db.getFriendsWannabes(id)
+        .then((result) => {
+            console.log("rezultz", result.rows);
+            res.json(result.rows);
+        })
+        .catch((error) => {
+            console.log("error in friends-wannabes: ", error);
+        });
+});
+
+app.delete("/delete/:id", (req, res) => {
+     let userId = req.session.userId;
+        db.deleteProfile(id)
+            .then(() => {
+                delete req.session.user.id;
+                req.session = null;
+            res.json({ delete: true });
+            })
+            .catch((err) => {
+                console.log("error in delete req", err);
+            });
+    }
+});
+
 // it is important that the * route is the LAST get route we have....
 app.get("*", function (req, res) {
     console.log("req.session: ", req.session);
@@ -389,7 +431,7 @@ app.get("*", function (req, res) {
     res.sendFile(__dirname + "/index.html");
 });
 
-app.listen(8080, function () {
+server.listen(8080, function () {
     //app zamijeniti za server. (za socket) - ne treba mijenjati routes
     console.log("I'm listening.");
 });
@@ -399,3 +441,37 @@ app.listen(8080, function () {
 // io.on('connection', function(socket) {
 //     console.log(`socket with the id ${socket.id} is now connected`);
 // });
+
+io.on("connection", function (socket) {
+    console.log(`socket with the ${socket.id} is now connected`);
+
+    if (!socket.request.session.userId) {
+        return socket.disconnect(true);
+    }
+
+    const userId = socket.request.session.userId;
+
+    db.getChatMsgs()
+        .then((result) => {
+            io.sockets.emit("chatMessages", result.rows);
+        })
+        .catch((error) => {
+            console.log("error in gettenlastmsgs: ", error);
+        });
+
+    socket.on("newChatMsg", (newMsg) => {
+        db.insertNewMsg(newMsg, userId)
+            .then(() => {
+                db.getMessenger(userId)
+                    .then((response) => {
+                        io.sockets.emit("chatMessage", response.rows);
+                    })
+                    .catch((error) =>
+                        console.log("error in getMessenger: ", error)
+                    );
+            })
+            .catch((error) => {
+                console.log("error in insertnewMsg: ", error);
+            });
+    });
+});

@@ -29,7 +29,7 @@ export function receiveFriendsWannabes() {
 
 export function unfriend(id) {
     return axios
-        .post(`/end-friendship/${id}`)
+        .post(`/endfriendship/${id}`)
         .then((response) => {
             return {
                 type: "UNFRIEND",
@@ -43,7 +43,7 @@ export function unfriend(id) {
 
 export function acceptFriend(id) {
     return axios
-        .post(`/add-friendship/${id}`)
+        .post(`/addfriendship/${id}`)
         .then((response) => {
             return {
                 type: "ACCEPT_FRIEND_REQUEST",
@@ -53,4 +53,18 @@ export function acceptFriend(id) {
         .catch((error) => {
             console.log("error in receive friends wannabes: ", error);
         });
+}
+
+export function chatMessages(msgs) {
+    return {
+        type: "GET_LAST_TEN_MSGS",
+        msgs,
+    };
+}
+
+export function chatMessage(msg) {
+    return {
+        type: "NEW_CHAT_MESSAGE",
+        msg,
+    };
 }

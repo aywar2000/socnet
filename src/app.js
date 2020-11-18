@@ -9,8 +9,10 @@ import { BrowserRouter, Route, Link } from "react-router-dom";
 import Profile from "./profile";
 import OtherProfile from "./otherprofile.js";
 import FindPeople from "./findpeople";
-import FriendBtn from "./friendbtn";
+//import FriendBtn from "./friendbtn";
 import Friends from "./friends.js";
+import Chat from "./chat.js";
+//poludeću ooo poluudeću
 
 export default class App extends React.Component {
     constructor() {
@@ -117,6 +119,9 @@ export default class App extends React.Component {
                     <Link to="/users">find like-minded people</Link>
                     <h4>______</h4>
                     <Link to="/friends">friends</Link>
+                    <h4>______</h4>
+                    <Link to="/chat">chat</Link>
+                    <h4>______</h4>
                     <Profile
                         first={this.state.first}
                         last={this.state.last}
@@ -138,7 +143,7 @@ export default class App extends React.Component {
                 />
                 <Route path="/users" component={FindPeople} />
                 <Route path="/friends" component={Friends} />
-                <Route path="/friends" component={FriendBtn} />
+                <Route path="/chat" component={Chat} />
                 {/* <Route
                     exact
                     path="/"

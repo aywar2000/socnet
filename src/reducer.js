@@ -32,6 +32,19 @@ export default function reducer(state = {}, action) {
             }),
         };
     }
+    if (action.type === "GET_LAST_TEN_MSGS") {
+        state = {
+            ...state,
+            msgs: action.msgs,
+        };
+    }
+
+    if (action.type === "NEW_CHAT_MESSAGE") {
+        state = {
+            ...state,
+            msgs: state.msgs.concat(action.msg),
+        };
+    }
 
     return state;
 }

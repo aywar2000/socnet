@@ -77,7 +77,7 @@ module.exports.getLastUsers = (id) => {
     const q = `SELECT * FROM users
      WHERE id != $1
      ORDER BY created_at DESC 
-     LIMIT 3;`;
+     LIMIT 6;`;
     const params = [id];
     return db.query(q, params);
 };
@@ -129,7 +129,46 @@ module.exports.getFriendsWannabes = (id) => {
     JOIN users
     ON (accepted = false AND recipient_id = $1 AND sender_id = users.id)
     OR (accepted = true AND recipient_id = $1 AND sender_id = users.id)
-    OR (accepted = true AND recipient_id = $1 AND recipient_id = users.id)`;
+    OR (accepted = true AND sender_id = $1 AND recipient_id = users.id)`;
+    const params = [id];
+    return db.query(q, params);
+};
+
+module.exports.getChatMsgs = () => {
+    const q = `SELECT * FROM (SELECT chat.id, first, last, img_url, text, chat.created_at
+    FROM users
+    JOIN chat
+    ON user_id = users.id
+    ORDER BY created_at DESC
+    LIMIT 10) as last_chat
+    ORDER BY created_at ASC;
+    `;
+    return db.query(q);
+};
+
+module.exports.insertNewMsg = (newMsg, userId) => {
+    const q = `INSERT INTO chat (text, user_id)
+    VALUES ($1, $2)
+    RETURNING *`;
+    const params = [newMsg, userId];
+    return db.query(q, params);
+};
+
+module.exports.getMessenger = (userId) => {
+    const q = `SELECT chat.id, first, last, img_url, text, chat.created_at
+    FROM users
+    JOIN CHAT 
+    ON user_id = $1
+    WHERE users.id = $1
+    ORDER BY created_at DESC
+    LIMIT 1`;
+    const params = [userId];
+    return db.query(q, params);
+};
+
+exports.deleteProfile = (id) => {
+    const q = `DELETE FROM users
+             WHERE id = $1`;
     const params = [id];
     return db.query(q, params);
 };

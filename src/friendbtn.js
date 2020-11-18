@@ -5,6 +5,7 @@ export default function FriendBtn(props) {
     const [buttonText, setButtonText] = useState();
 
     useEffect(() => {
+        console.log("props-id", props.id);
         axios
             .get(`/checkfriendshipstatus/${props.id}`, {
                 params: { id: props.id },
@@ -23,12 +24,10 @@ export default function FriendBtn(props) {
                 ) {
                     setButtonText("cancel request");
                 } else if (response.data[0].accepted == true) {
-                    setButtonText("friendship's end");
+                    setButtonText("end friend");
                 }
             })
-            .catch((error) =>
-                console.log("error in component mount: ", error)
-            );
+            .catch((error) => console.log("error in component mount: ", error));
     }, []);
 
     const handleClick = (e) => {
@@ -66,7 +65,7 @@ export default function FriendBtn(props) {
                     params: { id: props.id },
                 })
                 .then(() => {
-                    setButtonText("end a friend");
+                    setButtonText("end friend");
                 })
                 .catch((error) => {
                     console.log("error in add: ", error);
@@ -79,7 +78,6 @@ export default function FriendBtn(props) {
             <button onClick={handleClick} className="friend-btn">
                 {buttonText}
             </button>
-            {buttonText == "end a friend"}
         </React.Fragment>
     );
 }

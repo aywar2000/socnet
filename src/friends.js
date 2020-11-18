@@ -21,41 +21,31 @@ export default function Friends() {
             )
         );
     });
-
+    console.log("wannabes", wannabes);
     useEffect(() => {
         dispatch(receiveFriendsWannabes());
     }, []);
-
+    console.log("friendsss", friends);
     return (
         <React.Fragment>
             <div>
                 {wannabes && wannabes.length > 0 && (
-                    <p>
-                        potential friends ({wannabes.length}):
-                    </p>
+                    <p>potential friends ({wannabes.length}):</p>
                 )}
                 <div>
                     {wannabes &&
                         wannabes.map((wannabe) => {
                             return (
-                                <div
-                                    key={wannabe.id}
-                                    
-                                >
+                                <div key={wannabe.id}>
                                     <div>
                                         <img
-                                            
                                             src={wannabe.img_url}
                                             onError={(e) => {
-                                                e.target.src =
-                                                    "/ok.png";
+                                                e.target.src = "/ok.png";
                                             }}
                                         />
                                     </div>
-                                    <Link
-                                        to={"/user/" + wannabe.id}
-                                        
-                                    >
+                                    <Link to={"/user/" + wannabe.id}>
                                         {wannabe.first} {wannabe.last}
                                     </Link>
                                     <button
@@ -64,7 +54,7 @@ export default function Friends() {
                                             dispatch(acceptFriend(wannabe.id));
                                         }}
                                     >
-                                        Accept Friend Request
+                                        accept request
                                     </button>
                                 </div>
                             );
@@ -73,32 +63,22 @@ export default function Friends() {
             </div>
             <div>
                 {friends && friends.length > 0 && (
-                    <p>
-                        friends ({friends.length}):
-                    </p>
+                    <p>friends ({friends.length}):</p>
                 )}
                 <div>
                     {friends &&
                         friends.map((friend) => {
                             return (
-                                <div
-                                    key={friend.id}
-                                   
-                                >
+                                <div key={friend.id}>
                                     <div>
                                         <img
-                                            
                                             src={friend.img_url}
                                             onError={(e) => {
-                                                e.target.src =
-                                                    "/ok.png";
+                                                e.target.src = "/ok.png";
                                             }}
                                         />
                                     </div>
-                                    <Link
-                                        to={"/user/" + friend.id}
-                                        
-                                    >
+                                    <Link to={"/user/" + friend.id}>
                                         {friend.first} {friend.last}
                                     </Link>
                                     <button
@@ -107,7 +87,7 @@ export default function Friends() {
                                             dispatch(unfriend(friend.id))
                                         }
                                     >
-                                        end friendship
+                                        end friend
                                     </button>
                                 </div>
                             );
