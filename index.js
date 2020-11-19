@@ -106,6 +106,7 @@ app.post("/registration", (req, res) => {
     const last = req.body.last;
     const email = req.body.email;
     const password = req.body.password;
+    console.log("password", password);
     console.log("Hit the post register route!!!");
     console.log("req.body: ", req.body);
     hash(password)
@@ -132,7 +133,7 @@ app.post("/login", (req, res) => {
         .then((result) => {
             const hashedPassword = result.rows[0].password;
             const password = req.body.password;
-            console.log("Password", password);
+            // console.log("Password", password);
             const id = result.rows[0].id;
 
             console.log("hashedPw", hashedPassword);

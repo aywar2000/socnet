@@ -91,7 +91,7 @@ export default class App extends React.Component {
                         <Logo />
 
                         <header>
-                            <h1>your profile</h1>
+                            <h3>your profile</h3>
                         </header>
                     </div>
                     <Link to="/logout" onClick={() => this.logout()}>
