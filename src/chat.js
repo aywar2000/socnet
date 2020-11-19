@@ -3,11 +3,10 @@ import { socket } from "./socket";
 import { useSelector } from "react-redux";
 
 export default function Chat() {
-    const elemRef = useRef(); 
+    const elemRef = useRef();
     const chatMessages = useSelector((state) => state && state.msgs);
 
     useEffect(() => {
-        
         elemRef.current.scrollTop =
             elemRef.current.scrollHeight - elemRef.current.clientHeight;
     }, [chatMessages]);
@@ -22,15 +21,15 @@ export default function Chat() {
 
     return (
         <div>
-            <div>
+            <div className="chat-container">
                 <div ref={elemRef}>
                     {chatMessages &&
                         chatMessages.map((msgs) => {
                             return (
-                                <div key={msgs.id}>
-                                    <div>
+                                <div className="msg-container" key={msgs.id}>
+                                    <div className="msg-img">
                                         <img
-                                            height="30px"
+                                            height="50px"
                                             src={msgs.img_url}
                                             onError={(e) => {
                                                 e.target.src = "/ok.png";
@@ -38,13 +37,14 @@ export default function Chat() {
                                         />
                                     </div>
                                     <div>
-                                        <p>
+                                        <p className="msg-user">
                                             {msgs.first} {msgs.last}
                                         </p>
-                                        <div>
+                                        <div className="msg-text">
                                             <p>{msgs.text}</p>
                                         </div>
-                                        <p>
+                                        at
+                                        <p className="msg-date">
                                             {new Date(
                                                 msgs.created_at
                                             ).toLocaleString()}
@@ -54,7 +54,7 @@ export default function Chat() {
                             );
                         })}
                 </div>
-                <textarea
+                <textarea className="msg-textarea"
                     placeholder="say it loud"
                     onKeyDown={keyCheck}
                 ></textarea>

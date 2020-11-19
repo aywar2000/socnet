@@ -82,23 +82,23 @@ app.get("/welcome", (req, res) => {
     } else {
         res.redirect("/");
     }
-    // console.log("welcome reached");
-    // console.log("req.session", req.session);
-    // let { userId } = req.session;
-    // console.log("userid for cookie", userId);
+    console.log("welcome reached");
+    console.log("req.session", req.session);
+    let { userId } = req.session;
+    console.log("userid for cookie", userId);
 
-    // app.get("/welcome", (req, res) => {
-    //     if (req.session.userId) {
-    //         res.redirect("/");
-    //     } else {
-    //         res.sendFile(__dirname + "/index.html");
-    //     }
-    // });
-    // if (userId) {
-    //     res.redirect("/");
-    // } else {
-    //     res.sendFile(__dirname + "/index.html");
-    // }
+    app.get("/welcome", (req, res) => {
+        if (req.session.userId) {
+            res.redirect("/");
+        } else {
+            res.sendFile(__dirname + "/index.html");
+        }
+    });
+    if (userId) {
+        res.redirect("/");
+    } else {
+        res.sendFile(__dirname + "/index.html");
+    }
 });
 
 app.post("/registration", (req, res) => {
@@ -132,7 +132,9 @@ app.post("/login", (req, res) => {
         .then((result) => {
             const hashedPassword = result.rows[0].password;
             const password = req.body.password;
+            console.log("Password", password);
             const id = result.rows[0].id;
+
             console.log("hashedPw", hashedPassword);
             compare(password, hashedPassword)
                 .then((matchValue) => {
@@ -400,19 +402,19 @@ app.get("/friends-wannabes", (req, res) => {
         });
 });
 
-app.delete("/delete/:id", (req, res) => {
-     let userId = req.session.userId;
-        db.deleteProfile(id)
-            .then(() => {
-                delete req.session.user.id;
-                req.session = null;
-            res.json({ delete: true });
-            })
-            .catch((err) => {
-                console.log("error in delete req", err);
-            });
-    }
-});
+// app.delete("/delete/:id", (req, res) => {
+//      let userId = req.session.userId;
+//         db.deleteProfile(id)
+//             .then(() => {
+//                 delete req.session.user.id;
+//                 req.session = null;
+//             res.json({ delete: true });
+//             })
+//             .catch((err) => {
+//                 console.log("error in delete req", err);
+//             });
+//     }
+// });
 
 // it is important that the * route is the LAST get route we have....
 app.get("*", function (req, res) {

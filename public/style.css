@@ -108,3 +108,28 @@
     height: 200px;
     width: 200px;
 }
+/*chat*/
+.chat-container {
+    border: 2px solid violet;
+    padding: 20px top;
+}
+.msg-container {
+    display: flex;
+    flex-direction: row;
+}
+.msg-user {
+    font-style: italic;
+}
+.msg-text {
+    border: 2px dotted violet;
+    font-weight: 14px;
+    padding: 10px top bottom;
+}
+.msg-date {
+    font-style: italic;
+}
+.msg-textarea {
+    height: 200px;
+    width: 200px;
+    background-color: palevioletred;
+}
