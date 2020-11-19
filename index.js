@@ -436,7 +436,7 @@ app.get("*", function (req, res) {
     res.sendFile(__dirname + "/index.html");
 });
 
-server.listen(8080, function () {
+server.listen(process.env.PORT || 8080, function () {
     //app zamijeniti za server. (za socket) - ne treba mijenjati routes
     console.log("I'm listening.");
 });
