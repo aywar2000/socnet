@@ -3,7 +3,9 @@ const app = express();
 const compression = require("compression");
 //socket
 const server = require("http").Server(app);
-const io = require("socket.io")(server, { origins: "localhost:8080" });
+const io = require("socket.io")(server, {
+    origins: "localhost:8080 https://socialnet-work.herokuapp.com:*",
+});
 const cookieSession = require("cookie-session");
 const db = require("./db");
 // eslint-disable-next-line no-unused-vars

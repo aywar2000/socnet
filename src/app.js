@@ -144,6 +144,7 @@ export default class App extends React.Component {
                 <Route path="/users" component={FindPeople} />
                 <Route path="/friends" component={Friends} />
                 <Route path="/chat" component={Chat} />
+
                 {/* <Route
                     exact
                     path="/"

@@ -22,12 +22,13 @@ export default function Profile({
                         }}
                     />
                 </div>
-
-                <h1 className="user-name">
-                    {first} {last}
-                </h1>
+                <div className="user-info">
+                    <h1 className="user-name">
+                        {first} {last}
+                    </h1>
+                    <BioEditor bio={bio} setBio={setBio} />
+                </div>
             </div>
-            <BioEditor bio={bio} setBio={setBio} />
         </React.Fragment>
     );
 }

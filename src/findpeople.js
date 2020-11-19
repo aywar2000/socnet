@@ -29,9 +29,11 @@ export default function FindPeople() {
     };
 
     return (
-        <div className="find-container">
+        <div>
+            <h4>______________________</h4>
             <input onChange={handleChange} placeholder="find people"></input>
-            <div>
+            <h3>connect with like-minded people here</h3>
+            <div className="find-container">
                 {users.map((user) => {
                     return (
                         <div key={user.id} className="user-id">
@@ -39,9 +41,11 @@ export default function FindPeople() {
                                 src={user.img_url || "/ok.png"}
                                 className="find-foto"
                             />
-                            <Link to={"/user/" + user.id}>
-                                {user.first} {user.last}
-                            </Link>
+                            <div className="link-user">
+                                <Link to={"/user/" + user.id}>
+                                    {user.first} {user.last}
+                                </Link>
+                            </div>
                         </div>
                     );
                 })}

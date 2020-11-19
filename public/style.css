@@ -13,8 +13,16 @@
 .input-form {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     padding-bottom: 30px;
+}
+input {
+    padding: 10px;
+}
+.register {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .login-input {
     display: flex;
@@ -50,6 +58,10 @@
     height: 30px;
     width: 100px;
 }
+.profile {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
 .profile-container {
     display: flex;
     flex-direction: row;
@@ -57,11 +69,21 @@
     font-size: 20px;
     margin-top: -20px;
 }
+.user-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
 .user-name {
     font-weight: 15px;
 }
 
 /* bio-editor*/
+.bio-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 .textarea-bio {
     height: 200px;
     width: 200px;
@@ -77,20 +99,40 @@
     height: 30px;
     width: 100px;
 }
-
+/*other-profile*/
+.other-profile {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+.other-foto {
+    height: 200px;
+    width: 200px;
+}
+.other-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.other-name {
+    font-weight: 20px;
+}
 /*find-people*/
 .find-container {
     /*prebaci u grid*/
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
 }
 .user-id {
     padding-top: 100px;
-    font-weight: 10px;
+
+    display: flex;
+    flex-direction: column;
 }
+
 .find-foto {
     height: 250px;
     width: 250px;
+    padding: 25px;
+    border: 2px dotted palevioletred;
 }
 
 .friend-btn {

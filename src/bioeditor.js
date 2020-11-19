@@ -41,7 +41,7 @@ export default class BioEditor extends React.Component {
     render() {
         let editBio;
         let txtarea = (
-            <div>
+            <div className="bio-block">
                 <textarea
                     className="textarea-bio"
                     name="textarea"
